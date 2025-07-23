@@ -1,7 +1,66 @@
+'use client';
+
 import Image from "next/image";
 import Link from "next/link";
+import { useState, useEffect } from "react";
 
 export default function Home() {
+  const [email, setEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  // Clear message and show form again after timeout
+  useEffect(() => {
+    if (message) {
+      const timeout = setTimeout(() => {
+        setMessage('');
+        setIsSuccess(false);
+      }, isSuccess ? 5000 : 3000); // 5 seconds for success, 3 seconds for error
+
+      return () => clearTimeout(timeout);
+    }
+  }, [message, isSuccess]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email || !email.includes('@')) {
+      setMessage('Please enter a valid email address');
+      setIsSuccess(false);
+      return;
+    }
+
+    setIsLoading(true);
+    setMessage('');
+
+    try {
+      const response = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage('🎉 Successfully joined the waitlist! Check your email for confirmation.');
+        setIsSuccess(true);
+        setEmail('');
+      } else {
+        setMessage(data.error || 'Something went wrong. Please try again.');
+        setIsSuccess(false);
+      }
+    } catch (error) {
+      setMessage('Network error. Please check your connection and try again.');
+      setIsSuccess(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const socials = [
     { name: 'Github', url: 'https://x.com/serendaleai', icon: '/icons/github.svg' },
     { name: 'Discord', url: 'https://discord.gg/serendaleai', icon: '/icons/discord.svg' },
@@ -26,7 +85,7 @@ export default function Home() {
           <div className="flex gap-[16px]">
             {
               socials.map((social) => (
-                <Link href={social.url} key={social.name}>
+                <Link target="_blank" href={social.url} key={social.name}>
                   <Image src={social.icon} alt={social.name} width={20} height={20} />
                 </Link>
               ))
@@ -50,16 +109,44 @@ export default function Home() {
           Our technology performing fast blockchain (120K TPS) and it has guaranteed <br /> AI-based data security. Proof of Stake, its consensus algorithm enables <br /> unlimited speeds.
           </p>
           <div className="flex gap-3">
-            <form action="" className="flex gap-3">
-              <input type="email" placeholder="Enter your email" className="text-white border-2 border-white rounded-full px-5 py-4" />
-              <button type="submit" className="relative rounded-full font-normal font-space px-5 py-4 cursor-pointer group">
-                <span className="z-[1] absolute p-0 top-0 right-0 bottom-0 left-0 rounded-full gradient-border"></span>
-                <span className="z-[2] absolute p-0 top-0.5 right-0.5 left-0.5 bottom-0.5 rounded-full bg-black"></span>
-                <span className="relative z-10 p-0 text-white flex items-center justify-center">
-                Join Waitlist
-                </span>
-              </button>
-            </form>
+            {!isSuccess && (
+              <form onSubmit={handleSubmit} className="flex gap-3">
+                <input 
+                  type="email" 
+                  placeholder="Enter your email" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={isLoading}
+                  className="text-white bg-transparent border-2 border-white rounded-full px-5 py-4 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50 disabled:opacity-50" 
+                />
+                <button 
+                  type="submit" 
+                  disabled={isLoading}
+                  className="relative rounded-full font-normal font-space px-5 py-4 cursor-pointer group disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <span className="z-[1] absolute p-0 top-0 right-0 bottom-0 left-0 rounded-full gradient-border"></span>
+                  <span className="z-[2] absolute p-0 top-0.5 right-0.5 left-0.5 bottom-0.5 rounded-full bg-black"></span>
+                  <span className="relative z-10 p-0 text-white flex items-center justify-center">
+                    {isLoading ? 'Joining...' : 'Join Waitlist'}
+                  </span>
+                </button>
+              </form>
+            )}
+            
+            {message && (
+              <div className={`p-3 rounded-lg text-center ${
+                isSuccess 
+                  ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+                  : 'bg-red-500/20 text-red-400 border border-red-500/30'
+              }`}>
+                {message}
+                {isSuccess && (
+                  <div className="mt-2 text-sm opacity-75">
+                    Form will reappear in a few seconds...
+                  </div>
+                )}
+              </div>
+            )}
             {/* <button className="text-white border-2 border-white cursor-pointer px-5 py-4 rounded-full">
               <span className="font-space font-normal">
                 Ecosystems
