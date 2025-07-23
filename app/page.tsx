@@ -1,5 +1,6 @@
 'use client';
 
+import { truncate } from "fs";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -69,18 +70,18 @@ export default function Home() {
   ];
 
   return (
-    <div className="w-full pt-8 3xl:pt-10">
-      <main className="flex flex-col mx-auto gap-[48px] w-full items-center">
-        <nav className="flex gap-[24px] font-clash w-full justify-between max-w-screen-xl">
+    <div className="w-full flex flex-col gap-y-30 xl:gap-y-0 overflow-hidden xl:overflow-visible h-screen xl:h-auto max-h-screen">
+      <main className="flex flex-col mx-auto gap-[48px]  pt-8 3xl:pt-10 w-full items-center">
+        <nav className="flex gap-[24px] font-clash w-full justify-between max-w-screen-xl px-4 xl:px-0">
           <Link href="/">
             <Image src="/icons/logo.svg" alt="Serendale AI" width={117} height={34} />
           </Link>
-          <div className="flex gap-[24px]">
-            <Link href="/about">Smart-contracts</Link>
-            <Link href="/contact">Services</Link>
-            <Link href="/contact">Solutions</Link>
-            <Link href="/contact">Roadmap</Link>
-            <Link href="/contact">Whitepaper</Link>
+          <div className="hidden xl:flex  gap-[24px]">
+            <Link href="/">Smart-contracts</Link>
+            <Link href="/">Services</Link>
+            <Link href="/">Solutions</Link>
+            <Link href="/">Roadmap</Link>
+            <Link href="/">Whitepaper</Link>
           </div>
           <div className="flex gap-[16px]">
             {
@@ -92,8 +93,8 @@ export default function Home() {
             }
           </div>
         </nav>
-        <div className="flex mt-20 flex-col items-center text-center gap-[24px]">
-          <h1 className="text-[80px] leading-[1.1] font-clash w-[15ch] font-medium">
+        <div className="flex xl:mt-20 mt-0 flex-col items-center text-center gap-[24px]">
+          <h1 className="xl:text-[80px] text-[40px] leading-[1.1] font-clash w-[15ch] font-medium">
             <span
               className="bg-gradient-to-r bg-clip-text text-transparent"
               style={{
@@ -105,12 +106,12 @@ export default function Home() {
             </span>{" "}
             Scalable AI.
           </h1>
-          <p className="text-[20px] font-light font-cabinet ">
-          Our technology performing fast blockchain (120K TPS) and it has guaranteed <br /> AI-based data security. Proof of Stake, its consensus algorithm enables <br /> unlimited speeds.
+          <p className="xl:text-[20px] text-[16px] font-light font-cabinet max-w-[38ch] xl:max-w-[50ch] mx-auto leading-relaxed">
+          Our technology performing fast blockchain (120K TPS) and it has guaranteed AI-based data security. Proof of Stake, its consensus algorithm enables unlimited speeds.
           </p>
-          <div className="flex gap-3">
+          <div className="flex flex-col gap-3 ">
             {!isSuccess && (
-              <form onSubmit={handleSubmit} className="flex gap-3">
+              <form onSubmit={handleSubmit} className="flex max-w-full w-full xl:w-auto gap-3">
                 <input 
                   type="email" 
                   placeholder="Enter your email" 
@@ -133,11 +134,11 @@ export default function Home() {
               </form>
             )}
             
-            {message && (
-              <div className={`p-3 rounded-lg text-center ${
+            {true && (
+              <div className={`text-center max-w-full w-full ${
                 isSuccess 
-                  ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
-                  : 'bg-red-500/20 text-red-400 border border-red-500/30'
+                  ? ' text-green-400 ' 
+                  : ' text-red-400'
               }`}>
                 {message}
                 {isSuccess && (
@@ -163,10 +164,8 @@ export default function Home() {
           <div className="absolute w-72 h-72 bg-gradient-to-r from-indigo-400/35 to-purple-400/35 rounded-full blur-3xl animate-float-fast"></div>
         </div>
 
-        <Image src="/hero.png" alt="Serendale AI" className="w-full relative z-10" width={1000} height={1000} />
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        
-      </footer>
+        <Image src="/hero.png" alt="Serendale AI" className="w-full scale-200 xl:scale-100 h-auto relative z-10" width={1000} height={1000} />
+      
     </div>
   );
 }
